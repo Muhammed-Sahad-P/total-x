@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { sendOtp } from '../redux/authSlice';
+import { sendOtp } from '../redux/auth';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
@@ -20,9 +20,12 @@ const LoginPage: React.FC = () => {
         .required("Phone number is required"),
     }),
     onSubmit: async (values) => {
-      console.log("hi")
-      dispatch(sendOtp(values.phone));
-      navigate("/verify-otp");
+      try {
+        await dispatch(sendOtp(values.phone));
+        navigate("/verify-otp");
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
 
@@ -50,7 +53,7 @@ const LoginPage: React.FC = () => {
               />
             </div>
 
-            <Button text="Get OTP" loading={loading} width="w-full" />
+            <Button text="Get OTP" loading={loading} width="w-full" type='submit' />
           </form>
 
           <div className="text-center mt-4">

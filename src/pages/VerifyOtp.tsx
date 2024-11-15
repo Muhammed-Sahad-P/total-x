@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { verifyOtp } from '../redux/authSlice';
+import { verifyOtp } from '../redux/auth';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -11,23 +11,22 @@ import Input from '../components/Input';
 
 const VerifyOtp: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const { loading, authError, verificationId } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const formik = useFormik({
-    initialValues: { otp: '' },
+    initialValues: { otp: "" },
     validationSchema: Yup.object({
       otp: Yup.string().length(6, 'Otp must be 6 digits').required('Otp is required'),
     }),
-    onSubmit: (values) => {
-      if (window.confirmationResult) {
-        dispatch(verifyOtp({ confirmationResult: window.confirmationResult, otp: values.otp }));
+    onSubmit: async (values) => {
+      if (verificationId) {
+        await dispatch(verifyOtp({ otp: values.otp, verificationId }));
         navigate('/home');
-      } else {
-        console.error('OTP not sent or confirmationResult is missing');
       }
     },
   });
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center font-poppins">
@@ -60,12 +59,12 @@ const VerifyOtp: React.FC = () => {
             <Button text={loading ? 'Verifying...' : 'Verify'} disabled={loading || formik.isSubmitting} width="w-full" type="submit" />
           </form>
 
-          {error && <div className="text-red-500 text-sm mt-4 font-poppins">{error}</div>}
+          {authError && <div className="text-red-500 text-sm mt-4 font-poppins">{authError}</div>}
 
           <div className="text-center mt-4">
             <p className="text-black font-poppins text-sm">
               Didn't receive the code?{' '}
-              <a href="*" className="text-red-500 hover:underline font-poppins text-sm">
+              <a href="#" className="text-red-500 hover:underline font-poppins text-sm">
                 Resend
               </a>
             </p>

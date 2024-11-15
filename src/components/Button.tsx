@@ -7,12 +7,21 @@ interface ButtonProps {
     height?: string;
     disabled?: boolean;
     loading?: boolean;
-    type?: string
+    type?: 'button' | 'submit' | 'reset';
 }
 
-const Button: React.FC<ButtonProps> = ({ text, onClick, width = 'w-full', height = 'h-12', disabled = false, loading = false, type }) => {
+const Button: React.FC<ButtonProps> = ({
+    text,
+    onClick,
+    width = 'w-full',
+    height = 'h-12',
+    disabled = false,
+    loading = false,
+    type = 'button'
+}) => {
     return (
         <button
+            type={type}
             onClick={onClick}
             disabled={disabled || loading}
             className={`${width} ${height} bg-[#515DEF] text-white font-medium rounded-sm hover:bg-[#515DEF] font-poppins focus:outline-none disabled:opacity-50 flex items-center justify-center`}
